@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package rpc;
+
+message ProfileRequest {
+    string app_secret = 1;
+    string app_group_secret = 2;
+    string app_name = 3;
+    string access_token = 4;
+    string cluster_name = 5;
+}
+
+message Profile {
+    int32 id = 1;
+    string name = 2;
+    string app_secret = 3;
+    string app_group_name = 4;
+    int32 max_tps = 5;
+    string cluster_name = 6;
+    string consul_host = 7;
+    string status = 8;
+    ProfileMeta meta = 9;
+}
+
+message ProfileMeta {
+	map<string, string> service_names = 1;
+	KafkaMeta kafka = 2;
+	ElasticsearchMeta elasticsearch = 3;
+}
+
+message KafkaMeta {
+	string topic_name = 1;
+	int32 partition = 2;
+	int32 replication_factor = 3;
+	string consumer_group = 4;
+}
+
+message ElasticsearchMeta {
+	string index_prefix = 1;
+	string document_type = 2;
+}
+
+message User {
+    string username = 1;
+    string cluster_name = 2;
+}
+
+message AuthResponse {
+    bool status = 1;
+}
+
+service ProfileService {
+    rpc GetProfileByAppSecret(ProfileRequest) returns (Profile) {}
+    rpc GetProfileByAppGroupSecret(ProfileRequest) returns (Profile) {}
+    rpc GetProfileByClusterName(ProfileRequest) returns (Profile) {}
+    rpc GetUserAuthorization(User) returns (AuthResponse) {}
+}
